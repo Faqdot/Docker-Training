@@ -1,571 +1,406 @@
-# Docker: Complete Beginner Practical Manual
-
-**A practical guide to Docker, custom images, container management, security checks, resource monitoring, and GitHub project management.**
-
-**Author:** Faqdot  
-**Repository:** https://github.com/Faqdot/Docker-Training
-
----
-
-# Table of Contents
-
-1. Introduction to Docker
-2. Docker Architecture
-3. Prerequisites
-4. Install Docker
-5. Verify Docker
-6. Docker Basic Concepts
-7. Docker Command Structure
-8. Docker Images
-9. Docker Containers
-10. Docker Container Lifecycle
-11. Dockerfile – Build Custom Images
-12. Build a Custom Kali Linux Image
-13. Run and Access Kali Linux
-14. Linux Users and Permissions
-15. Docker Networking
-16. Docker Volumes and Storage
-17. Container Resource Management
-18. Resource Monitoring Before and After Running
-19. Docker Security Checks
-20. Dockerfile Security
-21. Container Security
-22. Docker Logs and Troubleshooting
-23. Docker Compose
-24. Docker Cleanup and Maintenance
-25. Docker Aliases and Shortcuts
-26. Git and GitHub Setup
-27. SSH Authentication
-28. Save and Upload the Project
-29. Terminal Input and Output Examples
-30. Screenshots and Documentation
-31. Common Errors and Solutions
-32. Security Best Practices
-33. Learning Checklist
-34. Project Directory Structure
-35. Useful Documentation
-
----
-
-# 1. Introduction to Docker
  
-Docker is a platform used to build, package, and run applications inside containers.
+# Docker: Complete Practical Training Guide
 
-Containers allow applications to run in isolated environments with their required dependencies.
-
-### Why use Docker?
-
-- Run applications in isolated environments.
-- Build custom application environments.
-- Reduce dependency conflicts.
-- Deploy applications consistently.
-- Create repeatable development environments.
-- Manage application resources.
-- Test software without installing everything directly on the host.
-
-### Example
-
-Without Docker:
-
-```text
-Host Linux
-   |
-   +-- Application A
-   +-- Application B
-   +-- Dependencies
-   +-- Configuration conflicts
-```
-
-With Docker:
-
-```text
-Host Linux
-   |
-   +-- Docker Engine
-          |
-          +-- Container A
-          |     +-- Application A
-          |     +-- Dependencies
-          |
-          +-- Container B
-                +-- Application B
-                +-- Dependencies
-```
+A beginner-to-advanced guide to learning Docker, managing containers, building custom images, configuring networking and storage, monitoring resources, performing security checks, and maintaining Docker projects.
 
 ---
+
+## Table of Contents
+
+1. [Introduction](#1-introduction)
+2. [Docker Architecture](#2-docker-architecture)
+3. [Prerequisites](#3-prerequisites)
+4. [Install Docker](#4-install-docker)
+5. [Docker Basic Concepts](#5-docker-basic-concepts)
+6. [Docker Command Basics](#6-docker-command-basics)
+7. [Image Management](#7-image-management)
+8. [Container Management](#8-container-management)
+9. [Docker Run Options](#9-docker-run-options)
+10. [Build Custom Images](#10-build-custom-images)
+11. [Dockerfile Instructions](#11-dockerfile-instructions)
+12. [Build a Custom Kali Image](#12-build-a-custom-kali-image)
+13. [Users and Permissions](#13-users-and-permissions)
+14. [Docker Networking](#14-docker-networking)
+15. [Port Mapping](#15-port-mapping)
+16. [Docker Volumes](#16-docker-volumes)
+17. [Bind Mounts](#17-bind-mounts)
+18. [Resource Management](#18-resource-management)
+19. [Resource Monitoring](#19-resource-monitoring)
+20. [Docker Security Checks](#20-docker-security-checks)
+21. [Docker Security Best Practices](#21-docker-security-best-practices)
+22. [Logs and Troubleshooting](#22-logs-and-troubleshooting)
+23. [Docker Compose](#23-docker-compose)
+24. [Docker Cleanup](#24-docker-cleanup)
+25. [Useful Docker Aliases](#25-useful-docker-aliases)
+26. [Docker Project Structure](#26-docker-project-structure)
+27. [Docker Ignore Files](#27-docker-ignore-files)
+28. [Git and GitHub](#28-git-and-github)
+29. [Common Errors](#29-common-errors)
+30. [Quick Command Reference](#30-quick-command-reference)
+31. [Practical Workflow](#31-practical-workflow)
+32. [Learning Roadmap](#32-learning-roadmap)
+
+---
+
+# 1. Introduction
+
+Docker is a platform used to build, package, and run applications in isolated environments called containers.
+
+### Why Docker?
+
+- Run applications without installing every dependency on the host.
+- Create consistent development environments.
+- Build reusable custom images.
+- Start and stop environments quickly.
+- Isolate applications and their dependencies.
+- Simplify development, testing, and deployment.
+
+### Where Docker is used
+
+- Application development
+- Software testing
+- DevOps
+- CI/CD pipelines
+- Cloud deployments
+- Microservices
+- Security testing in authorized labs
 
 # 2. Docker Architecture
 
 Docker uses a client-server architecture.
 
-### Main components
-
-| Component | Purpose |
+| Component | Description |
 |---|---|
-| Docker Client | Accepts commands such as `docker run` |
-| Docker Daemon | Manages Docker objects |
-| Docker Images | Templates used to create containers |
-| Docker Containers | Isolated application environments |
-| Docker Registry | Stores Docker images |
-| Docker Volumes | Stores persistent data |
-| Docker Networks | Connects containers |
+| Docker Client | Accepts commands from the user |
+| Docker Daemon | Manages Docker resources |
+| Docker Image | Template used to create containers |
+| Docker Container | Instance created from an image |
+| Docker Registry | Stores and distributes images |
+| Docker Volume | Provides persistent storage |
+| Docker Network | Allows containers to communicate |
 
-### Architecture diagram
+### Architecture flow
 
 ```text
-                Docker Client
-                     |
-                     | Docker commands
-                     v
-                Docker Daemon
-                     |
-          +----------+----------+
-          |          |          |
-          v          v          v
-        Images   Containers   Networks
-                     |
-                     v
-                  Volumes
-                     |
-                     v
-                Persistent Data
+User
+  |
+  v
+Docker Client
+  |
+  v
+Docker Daemon
+  |
+  +---- Images
+  |
+  +---- Containers
+  |
+  +---- Networks
+  |
+  +---- Volumes
+  |
+  v
+Docker Registry
 ```
-
----
 
 # 3. Prerequisites
 
-Prepare the following:
+Recommended environment:
 
-- Linux or WSL.
-- Docker Engine or Docker Desktop.
-- Git.
-- GitHub account.
-- Basic Bash knowledge.
-- Internet connection for downloading images and packages.
+- Ubuntu or Debian Linux
+- WSL2 with a supported Linux distribution
+- Kali Linux for an isolated learning environment
+- Docker Engine
+- Git
+- Basic Linux command knowledge
 
-Update your Linux system:
+Check the Linux version:
+
+```bash
+cat /etc/os-release
+```
+
+Check available memory:
+
+```bash
+free -h
+```
+
+Check disk space:
+
+```bash
+df -h
+```
+
+# 4. Install Docker
+
+### Step 1: Update packages
 
 ```bash
 sudo apt update
 sudo apt upgrade -y
 ```
 
-Install useful utilities:
+**Why:** Updates package information and installed software.
+
+### Step 2: Install Docker
+
+For a basic Ubuntu/Debian installation:
 
 ```bash
-sudo apt install -y \
-  git \
-  curl \
-  wget \
-  nano \
-  vim \
-  openssh-client \
-  ca-certificates
+sudo apt install docker.io -y
 ```
 
----
+**Why:** Installs Docker Engine from the distribution's package repository.
 
-# 4. Install Docker
+For production environments, follow the official Docker installation instructions for your distribution.
 
-Follow the official Docker installation guide:
-
-https://docs.docker.com/engine/install/
-
-For Debian-based Linux systems, use the official Docker Engine installation instructions for your distribution.
-
-After installation, check Docker:
+### Step 3: Start Docker
 
 ```bash
-docker --version
+sudo systemctl enable --now docker
 ```
 
-Check Docker service:
+**Why:**
+- `enable` configures Docker to start after reboot.
+- `--now` starts Docker immediately.
+
+### Step 4: Check Docker status
 
 ```bash
 sudo systemctl status docker
 ```
 
-Start Docker if necessary:
+### Step 5: Check Docker version
 
 ```bash
-sudo systemctl start docker
-```
-
-Enable Docker at startup:
-
-```bash
-sudo systemctl enable docker
-```
-
-Check Docker information:
-
-```bash
+docker --version
 docker info
 ```
 
-> On Docker Desktop with WSL integration, Docker may be managed by Docker Desktop rather than by a Docker service inside WSL.
-
----
-
-# 5. Verify Docker
-
-Run the official test image:
+### Step 6: Test Docker
 
 ```bash
 sudo docker run hello-world
 ```
 
-Expected output:
-
-```
-Hello from Docker!
-
-This message shows that your installation appears
-to be working correctly.
-
-```
-
-Check the Docker version:
-
-```bash
-docker --version
-```
-
-Example:
-
-``
-Docker version 29.x.x, build xxxxxxx
-``
-
-Check available images:
-
-```bash
-docker images
-```
-
-Check running containers:
-
-```bash
-docker ps
-```
-
----
-
-# 6. Docker Basic Concepts
-
-| Term | Simple explanation |
-|---|---|
-| Image | Template for creating a container |
-| Container | An instance created from an image |
-| Dockerfile | Instructions for building an image |
-| Volume | Persistent storage |
-| Network | Container communication |
-| Registry | Image storage service |
-| Compose | Tool for managing multiple containers |
-| Daemon | Background service managing Docker |
-
-### Important difference: Image vs Container
+Expected result:
 
 ```text
-Docker Image
-     |
-     | docker run
-     v
-Docker Container
-     |
-     | docker start / stop
-     v
-Container Lifecycle
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
 ```
+
+# 5. Docker Basic Concepts
+
+| Concept | Meaning |
+|---|---|
+| Image | Read-only template |
+| Container | Image instance |
+| Dockerfile | Image build instructions |
+| Volume | Persistent storage |
+| Network | Container communication |
+| Registry | Image storage |
+| Compose | Multi-container management |
+
+### Image vs Container
 
 An image is a template. A container is created from that template.
 
----
+One image can create multiple containers.
 
-# 7. Docker Command Structure
+# 6. Docker Command Basics
 
-General format:
-
-```bash
-docker COMMAND OPTIONS ARGUMENTS
-```
-
-Examples:
+General syntax:
 
 ```bash
-docker images
-docker ps
-docker pull ubuntu
-docker run -it ubuntu bash
-docker exec -it CONTAINER bash
+docker [COMMAND] [OPTIONS] [ARGUMENTS]
 ```
 
-### Common Docker flags
+Help commands:
 
-| Flag | Meaning |
-|---|---|
-| `-i` | Keep standard input open |
-| `-t` | Allocate a terminal |
-| `-it` | Interactive terminal |
-| `-d` | Run in background |
-| `-p` | Publish a port |
-| `-v` | Mount a volume |
-| `--rm` | Remove container after it exits |
-| `--name` | Set container name |
-| `--hostname` | Set container hostname |
-| `--workdir` | Set working directory |
-| `--memory` | Set memory limit |
-| `--cpus` | Set CPU limit |
-| `--restart` | Configure restart behavior |
-| `--read-only` | Make container root filesystem read-only |
+```bash
+docker --help
+docker run --help
+docker exec --help
+docker image --help
+docker container --help
+```
 
----
+# 7. Image Management
 
-# 8. Docker Images
-
-Images are templates used to create containers.
-
-## 8.1 Download an image
+### Download an image
 
 ```bash
 docker pull ubuntu
 ```
 
-Download Kali Linux:
+**Why:** Downloads the Ubuntu image from a registry.
 
-```bash
-docker pull kalilinux/kali-rolling
-```
-
-## 8.2 List images
+### List images
 
 ```bash
 docker images
 ```
 
-Example:
-
-```text
-REPOSITORY             TAG       IMAGE ID       SIZE
-ubuntu                 latest    abc123456789   78MB
-kalilinux/kali-rolling latest    def987654321   150MB
-```
-
-## 8.3 Inspect an image
+### Inspect an image
 
 ```bash
 docker image inspect ubuntu
 ```
 
-## 8.4 View image history
+**Why:** Displays image configuration and metadata.
+
+### View image history
 
 ```bash
 docker history ubuntu
 ```
 
-## 8.5 Tag an image
+### Remove an image
 
 ```bash
-docker tag ubuntu my-ubuntu:v1
+docker rmi ubuntu
 ```
 
-## 8.6 Remove an image
+**Why:** Removes an image that is no longer needed and is not being used by a container.
+
+### Remove dangling images
 
 ```bash
-docker rmi IMAGE_ID
+docker image prune
 ```
 
-If a container still uses the image, remove the container first if it is no longer needed.
+Review the confirmation prompt before proceeding.
 
----
+# 8. Container Management
 
-# 9. Docker Containers
-
-## 9.1 Create and run a container
+### Run a container
 
 ```bash
-docker run -it --name ubuntu-lab ubuntu bash
+docker run ubuntu
 ```
 
-This creates a container and opens an interactive shell.
-
-## 9.2 Run a container in the background
+### Run an interactive container
 
 ```bash
-docker run -dit --name ubuntu-background ubuntu bash
+docker run -it ubuntu bash
 ```
 
-## 9.3 List running containers
+Explanation:
+
+- `-i`: Keeps standard input open.
+- `-t`: Allocates a terminal.
+- `bash`: Starts the Bash shell.
+
+### Run in background
+
+```bash
+docker run -dit --name ubuntu-lab ubuntu bash
+```
+
+Explanation:
+
+- `-d`: Detached mode.
+- `-i`: Interactive input.
+- `-t`: Terminal allocation.
+- `--name`: Assigns a container name.
+
+### List running containers
 
 ```bash
 docker ps
 ```
 
-## 9.4 List all containers
+### List all containers
 
 ```bash
 docker ps -a
 ```
 
-## 9.5 Access a running container
+### Enter an existing container
 
 ```bash
-docker exec -it ubuntu-background bash
+docker exec -it ubuntu-lab bash
 ```
 
-## 9.6 Stop a container
+**Important difference:**
 
-```bash
-docker stop ubuntu-background
-```
-
-## 9.7 Start a stopped container
-
-```bash
-docker start ubuntu-background
-```
-
-## 9.8 Restart a container
-
-```bash
-docker restart ubuntu-background
-```
-
-## 9.9 Remove a container
-
-```bash
-docker rm ubuntu-background
-```
-
-## 9.10 Force remove a container
-
-```bash
-docker rm -f ubuntu-background
-```
-
-**Remember:**
-
-- `docker rm` removes containers.
-- `docker rmi` removes images.
-
----
-
-# 10. Docker Container Lifecycle
-
-```text
-        Create
-          |
-          v
-        Created
-          |
-          v
-        Running
-          |
-       +--+--+
-       |     |
-       v     v
-     Pause  Stop
-       |     |
-       v     v
-    Paused  Exited
-       |     |
-       v     v
-    Unpause  Start
-       |     |
-       +-----+
-          |
-          v
-        Running
-          |
-          v
-        Remove
-```
-
-Useful commands:
-
-```bash
-docker create --name test ubuntu
-docker start test
-docker pause test
-docker unpause test
-docker stop test
-docker restart test
-docker rm test
-```
-
-Inspect lifecycle state:
-
-```bash
-docker inspect -f '{{.State.Status}}' test
-```
-
----
-
-# 11. Dockerfile – Build Custom Images
-
-A Dockerfile contains instructions for creating a custom Docker image.
-
-### Common Dockerfile instructions
-
-| Instruction | Purpose |
+| Command | Purpose |
 |---|---|
-| `FROM` | Select base image |
-| `RUN` | Execute build-time commands |
-| `COPY` | Copy local files into image |
-| `ADD` | Add files or remote resources |
-| `WORKDIR` | Set working directory |
-| `ENV` | Set environment variables |
-| `USER` | Set default user |
-| `EXPOSE` | Document application port |
-| `CMD` | Default command |
-| `ENTRYPOINT` | Main container executable |
-| `ARG` | Build-time variable |
-| `LABEL` | Add image metadata |
+| `docker run` | Creates and starts a new container |
+| `docker exec` | Runs a command inside an existing running container |
 
-### Example Dockerfile
-
-```dockerfile
-FROM ubuntu:24.04
-
-RUN apt-get update && apt-get install -y \
-    curl \
-    wget \
-    git \
-    nano \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-
-CMD ["/bin/bash"]
-```
-
-Build the image:
+### Stop a container
 
 ```bash
-docker build -t custom-ubuntu .
+docker stop ubuntu-lab
 ```
 
-Run it:
+### Start a stopped container
 
 ```bash
-docker run -it --name custom-test custom-ubuntu
+docker start ubuntu-lab
 ```
 
----
-
-# 12. Build a Custom Kali Linux Image
-
-This section creates a reusable Kali Linux lab environment.
-
-## 12.1 Create a project directory
+### Restart a container
 
 ```bash
-mkdir -p ~/project/kali-docker
-cd ~/project/kali-docker
+docker restart ubuntu-lab
 ```
 
-## 12.2 Create the Dockerfile
+### Remove a container
+
+```bash
+docker rm ubuntu-lab
+```
+
+### Force remove a container
+
+```bash
+docker rm -f ubuntu-lab
+```
+
+Use force removal carefully because it stops a running container.
+
+# 9. Docker Run Options
+
+| Option | Purpose |
+|---|---|
+| `-i` | Interactive input |
+| `-t` | Allocate terminal |
+| `-d` | Background execution |
+| `-it` | Interactive terminal |
+| `-dit` | Detached interactive terminal |
+| `--name` | Container name |
+| `--hostname` | Container hostname |
+| `-p` | Publish a port |
+| `-v` | Mount storage |
+| `--rm` | Remove container after it exits |
+| `--memory` | Set memory limit |
+| `--cpus` | Set CPU limit |
+| `--network` | Select a network |
+| `--read-only` | Make the root filesystem read-only |
+
+Example:
+
+```bash
+docker run --rm hello-world
+```
+
+**Why:** Useful for short-lived tests that do not need a retained container.
+
+# 10. Build Custom Images
+
+A Dockerfile contains instructions used to create a Docker image.
+
+### Step 1: Create a directory
+
+```bash
+mkdir -p ~/project/docker-lab
+cd ~/project/docker-lab
+```
+
+### Step 2: Create a Dockerfile
 
 ```bash
 nano Dockerfile
@@ -574,120 +409,210 @@ nano Dockerfile
 Add:
 
 ```dockerfile
+# Use Ubuntu as the base image
+FROM ubuntu:24.04
+
+# Add image metadata
+LABEL maintainer="Docker Training Lab"
+
+# Install basic tools
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    bash \
+    curl \
+    wget \
+    git \
+    nano && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set the working directory
+WORKDIR /app
+
+# Set the default command
+CMD ["/bin/bash"]
+```
+
+### Step 3: Build the image
+
+```bash
+docker build -t my-ubuntu-lab:1.0 .
+```
+
+Explanation:
+
+- `build`: Builds an image.
+- `-t`: Assigns a name and tag.
+- `.`: Uses the current directory as the build context.
+
+### Step 4: Verify the image
+
+```bash
+docker images
+docker image inspect my-ubuntu-lab:1.0
+```
+
+### Step 5: Run the custom image
+
+```bash
+docker run -dit --name my-lab my-ubuntu-lab:1.0
+```
+
+### Step 6: Enter the container
+
+```bash
+docker exec -it my-lab bash
+```
+
+# 11. Dockerfile Instructions
+
+| Instruction | Purpose |
+|---|---|
+| `FROM` | Selects the base image |
+| `RUN` | Executes commands during image build |
+| `CMD` | Defines the default command |
+| `ENTRYPOINT` | Defines the main executable |
+| `COPY` | Copies files into the image |
+| `ADD` | Copies files with additional features |
+| `WORKDIR` | Sets the working directory |
+| `ENV` | Defines environment variables |
+| `ARG` | Defines build-time variables |
+| `EXPOSE` | Documents intended container ports |
+| `USER` | Sets the default runtime user |
+| `LABEL` | Adds image metadata |
+
+**Important:** `EXPOSE` does not publish a port. Use `-p` when running the container to publish a port.
+
+# 12. Build a Custom Kali Image
+
+Create a separate directory:
+
+```bash
+mkdir -p ~/project/Docker-Training/examples/kali
+cd ~/project/Docker-Training/examples/kali
+```
+
+Create a Dockerfile:
+
+```bash
+nano Dockerfile
+```
+
+Add:
+
+```dockerfile
+# Use Kali rolling as the base image
 FROM kalilinux/kali-rolling
 
+# Avoid interactive package installation prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y \
+# Install basic tools and sudo
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     sudo \
-    passwd \
     bash \
     nano \
     vim \
     curl \
     wget \
-    git \
-    ca-certificates \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    git && \
+    rm -rf /var/lib/apt/lists/*
 
-# Create regular user
-RUN useradd -m -s /bin/bash kali \
-    && usermod -aG sudo kali
+# Create a regular user
+RUN useradd -m -s /bin/bash kali && \
+    usermod -aG sudo kali
 
-# Create project directory
-RUN mkdir -p /home/dev/project \
-    && chown -R kali:kali /home/dev
+# Create the working directory
+RUN mkdir -p /home/kali/project && \
+    chown -R kali:kali /home/kali/project
 
+# Set environment
 ENV HOME=/home/kali
 
-WORKDIR /home/dev/project
+# Set working directory
+WORKDIR /home/kali/project
 
+# Use regular user by default
 USER kali
 
+# Start Bash
 CMD ["/bin/bash"]
 ```
 
-## 12.3 Build the custom image
+### Build the image
 
 ```bash
-docker build -t secure-kali .
+docker build -t secure-kali:1.0 .
 ```
 
-## 12.4 Check the image
-
-```bash
-docker images
-```
-
-## 12.5 Run the container
+### Run the container
 
 ```bash
 docker run -dit \
-  --name kali-container \
+  --name kali-training \
   --hostname kali-training \
-  secure-kali
+  secure-kali:1.0
 ```
 
-## 12.6 Enter the container
+### Enter the container
 
 ```bash
-docker exec -it kali-container bash
+docker exec -it kali-training bash
 ```
 
-Check:
+### Verify
 
 ```bash
 whoami
-hostname
 pwd
+hostname
 ```
 
-Expected:
+Expected user:
 
 ```text
 kali
-kali-training
-/home/dev/project
 ```
 
-> This image creates a regular user but does not set a password. Configure passwords interactively after creation, or use a secure secrets-management process. Never put plain-text passwords into a Dockerfile.
+**Why use a regular user?** Running applications as root increases the impact of mistakes or compromised processes.
 
----
+# 13. Users and Permissions
 
-# 13. Linux Users and Permissions
-
-Enter as root:
+Enter the container as root when administrative changes are needed:
 
 ```bash
-docker exec -u root -it kali-container bash
+docker exec -u root -it kali-training bash
 ```
 
-Check users:
-
-```bash
-cat /etc/passwd
-```
-
-Check groups:
-
-```bash
-groups kali
-```
-
-Set the root password:
-
-```bash
-passwd root
-```
-
-Set the Kali user password:
+Set a password for the regular user:
 
 ```bash
 passwd kali
 ```
 
-Configure sudo:
+Set a root password:
+
+```bash
+passwd root
+```
+
+Check user information:
+
+```bash
+whoami
+id
+groups
+```
+
+Check permissions:
+
+```bash
+ls -la
+```
+
+### Configure sudo
+
+As root:
 
 ```bash
 visudo -f /etc/sudoers.d/kali
@@ -699,7 +624,7 @@ Add:
 kali ALL=(ALL:ALL) ALL
 ```
 
-Set permissions:
+Save and validate:
 
 ```bash
 chmod 440 /etc/sudoers.d/kali
@@ -713,671 +638,419 @@ su - kali
 sudo whoami
 ```
 
-Expected:
+**Security note:** Docker administrators can run commands as root inside containers. Container account passwords do not protect against someone who controls the Docker daemon.
 
-```text
-root
-```
-
----
+Passwords set interactively are lost if the container is removed and recreated. Do not store plaintext passwords in a Dockerfile or Git repository.
 
 # 14. Docker Networking
 
-Docker networks allow containers to communicate.
-
-## 14.1 List networks
+### List networks
 
 ```bash
 docker network ls
 ```
 
-## 14.2 Inspect a network
+### Inspect a network
 
 ```bash
 docker network inspect bridge
 ```
 
-## 14.3 Create a custom network
+### Create a network
 
 ```bash
 docker network create lab-network
 ```
 
-## 14.4 Run a container on the network
+### Run a container on the network
 
 ```bash
 docker run -dit \
-  --name lab-one \
+  --name app-lab \
   --network lab-network \
   ubuntu bash
 ```
 
-## 14.5 Connect another container
+### Connect a container
 
 ```bash
-docker run -dit \
-  --name lab-two \
-  --network lab-network \
-  ubuntu bash
+docker network connect lab-network app-lab
 ```
 
-Inspect the network:
+### Disconnect a container
 
 ```bash
-docker network inspect lab-network
+docker network disconnect lab-network app-lab
 ```
 
-## 14.6 Publish a port
+### Remove a network
+
+```bash
+docker network rm lab-network
+```
+
+**Why use custom networks?** They allow containers to communicate with each other using container names.
+
+# 15. Port Mapping
+
+Example:
 
 ```bash
 docker run -d \
-  --name web-test \
-  -p 127.0.0.1:8080:80 \
+  --name web-lab \
+  -p 8080:80 \
   nginx
 ```
 
-Visit:
+Port mapping:
+
+- Host port: `8080`
+- Container port: `80`
+
+Open:
 
 ```text
-http://127.0.0.1:8080
+http://localhost:8080
 ```
 
-The `127.0.0.1` binding keeps this example accessible from the local machine rather than exposing it on every network interface.
+Check port mappings:
 
----
+```bash
+docker port web-lab
+```
 
-# 15. Docker Volumes and Storage
+**Security note:** Published ports may be accessible outside the host depending on firewall and network configuration. Publish only necessary ports.
 
-Containers can be removed and recreated. Volumes help preserve data.
+# 16. Docker Volumes
 
-## 15.1 List volumes
+Containers are replaceable. Data stored only in a container's writable layer can be lost when the container is removed.
+
+### Create a volume
+
+```bash
+docker volume create lab-data
+```
+
+### List volumes
 
 ```bash
 docker volume ls
 ```
 
-## 15.2 Create a volume
+### Inspect a volume
 
 ```bash
-docker volume create kali-data
+docker volume inspect lab-data
 ```
 
-## 15.3 Inspect a volume
-
-```bash
-docker volume inspect kali-data
-```
-
-## 15.4 Mount a volume
+### Mount a volume
 
 ```bash
 docker run -dit \
-  --name volume-test \
-  -v kali-data:/data \
+  --name volume-lab \
+  -v lab-data:/data \
   ubuntu bash
 ```
 
-Enter:
+Inside the container:
 
 ```bash
-docker exec -it volume-test bash
+echo "Docker volume test" > /data/test.txt
+cat /data/test.txt
 ```
 
-Create a file:
+Remove the container:
 
 ```bash
-echo "Docker persistent data" > /data/test.txt
-```
-
-Exit and remove the container:
-
-```bash
-exit
-docker rm -f volume-test
+docker rm -f volume-lab
 ```
 
 Create another container using the same volume:
 
 ```bash
 docker run --rm \
-  -v kali-data:/data \
+  -v lab-data:/data \
   ubuntu cat /data/test.txt
 ```
 
-Expected:
+The file should still exist.
 
-```text
-Docker persistent data
-```
-
-The volume retains its data after the original container is removed.
-
----
-
-# 16. Container Resource Management
-
-Docker allows resource limits to be configured for containers.
-
-Important resources:
-
-- CPU
-- Memory
-- Storage
-- Processes
-- Network usage
-- Open file descriptors
-
-## 16.1 Set a memory limit
+### Remove a volume
 
 ```bash
-docker run -dit \
-  --name memory-test \
-  --memory=512m \
-  ubuntu bash
+docker volume rm lab-data
 ```
 
-This sets a 512 MB memory limit.
+Only remove volumes when their data is no longer required.
 
-## 16.2 Set a CPU limit
+# 17. Bind Mounts
+
+Bind mounts connect a host directory to a container directory.
+
+Create a directory:
 
 ```bash
-docker run -dit \
-  --name cpu-test \
-  --cpus=1.5 \
-  ubuntu bash
-```
-
-This limits the container to a maximum CPU allocation equivalent to 1.5 CPUs.
-
-## 16.3 Set memory and CPU together
-
-```bash
-docker run -dit \
-  --name resource-test \
-  --memory=512m \
-  --cpus=1.0 \
-  ubuntu bash
-```
-
-## 16.4 Set a restart policy
-
-```bash
-docker run -dit \
-  --name restart-test \
-  --restart=unless-stopped \
-  ubuntu bash
-```
-
-Common restart policies:
-
-| Policy | Behavior |
-|---|---|
-| `no` | No automatic restart |
-| `on-failure` | Restart after a failure |
-| `always` | Always restart |
-| `unless-stopped` | Restart unless manually stopped |
-
-## 16.5 Check container resource usage
-
-```bash
-docker stats
-```
-
-Example:
-
-```text
-CONTAINER ID   NAME            CPU %   MEM USAGE / LIMIT
-abc123         resource-test   0.20%   45MiB / 512MiB
-```
-
-## 16.6 Inspect configured resource limits
-
-```bash
-docker inspect resource-test
-```
-
-Focused memory and CPU output:
-
-```bash
-docker inspect -f \
-'Memory={{.HostConfig.Memory}} NanoCPUs={{.HostConfig.NanoCpus}}' \
-resource-test
-```
-
-## 16.7 Check process usage
-
-```bash
-docker top resource-test
-```
-
-## 16.8 Check disk usage
-
-```bash
-docker system df
-```
-
-## 16.9 Check filesystem usage inside a container
-
-```bash
-docker exec resource-test df -h
-```
-
-## 16.10 Check host resources
-
-```bash
-free -h
-df -h
-top
-```
-
-For a more convenient process viewer, install:
-
-```bash
-sudo apt install -y htop
+mkdir -p ~/docker-share
 ```
 
 Run:
 
 ```bash
-htop
+docker run --rm -it \
+  -v ~/docker-share:/data \
+  ubuntu bash
 ```
 
----
-
-# 17. Resource Monitoring Before and After Running
-
-Resource monitoring should be done before, during, and after a container runs.
-
-## Before running a container
-
-Check host memory:
+Inside the container:
 
 ```bash
-free -h
+echo "Shared file" > /data/example.txt
 ```
 
-Check host disk space:
+On the host:
 
 ```bash
-df -h
+cat ~/docker-share/example.txt
 ```
 
-Check CPU and processes:
+**Why use bind mounts?** They allow you to edit files on the host and access them inside a container.
+
+# 18. Resource Management
+
+### Set memory limit
 
 ```bash
-top
+docker run -dit \
+  --name memory-lab \
+  --memory="512m" \
+  ubuntu bash
 ```
 
-Check Docker disk usage:
+### Set CPU limit
 
 ```bash
-docker system df
+docker run -dit \
+  --name cpu-lab \
+  --cpus="1.0" \
+  ubuntu bash
 ```
 
-Check existing containers:
-
-```bash
-docker ps -a
-```
-
-Record the results.
-
-## Start a test container
+### Set CPU and memory limits
 
 ```bash
 docker run -dit \
   --name resource-lab \
-  --memory=512m \
-  --cpus=1.0 \
+  --memory="512m" \
+  --cpus="1.0" \
   ubuntu bash
 ```
 
-## While the container is running
+**Why set limits?** Resource limits help prevent one container from consuming excessive host resources.
 
-Check live usage:
+# 19. Resource Monitoring
 
-```bash
-docker stats resource-lab
-```
-
-Check processes:
-
-```bash
-docker top resource-lab
-```
-
-Check configuration:
-
-```bash
-docker inspect resource-lab
-```
-
-## Stop the container
-
-```bash
-docker stop resource-lab
-```
-
-Check status:
-
-```bash
-docker ps -a
-```
-
-## After stopping
-
-Check host memory:
-
-```bash
-free -h
-```
-
-Check Docker storage:
+### Before running a container
 
 ```bash
 docker system df
+docker ps -a
+free -h
+df -h
 ```
 
-Remove the test container when no longer needed:
+These commands show Docker storage, existing containers, available memory, and disk space.
+
+### Monitor live usage
 
 ```bash
-docker rm resource-lab
+docker stats
 ```
 
-### Resource monitoring comparison
+Shows:
 
-| Stage | Commands | What to observe |
-|---|---|---|
-| Before | `free -h`, `df -h` | Host memory and disk |
-| Before | `docker system df` | Docker storage usage |
-| Running | `docker stats` | Container CPU and memory |
-| Running | `docker top` | Container processes |
-| After | `free -h`, `df -h` | Host resource state |
-| After | `docker system df` | Docker storage state |
+- CPU usage
+- Memory usage
+- Network I/O
+- Block I/O
+- Process count
 
-> Stopping a container does not necessarily free its writable storage. Removing a container can remove that container's writable layer, but named volumes remain until separately removed. Host memory and CPU readings can also vary due to other running processes.
-
----
-
-# 18. Docker Security Checks
-
-Security checks help identify configuration risks and unexpected container behavior.
-
-Only inspect systems and containers you own or are authorized to manage.
-
-## 18.1 Docker version
+### Monitor one container
 
 ```bash
-docker version
+docker stats kali-training
 ```
 
-## 18.2 Docker system information
+### View container processes
 
 ```bash
-docker info
+docker top kali-training
 ```
 
-## 18.3 Inspect image configuration
+### Check container size
 
 ```bash
-docker image inspect secure-kali
+docker ps -s
 ```
 
-## 18.4 Inspect container configuration
+### During execution
 
 ```bash
-docker inspect kali-container
+docker stats
+docker top resource-lab
+docker logs resource-lab
 ```
 
-## 18.5 Check the running user
+### After execution
 
 ```bash
-docker exec kali-container whoami
+docker ps -a
+docker inspect resource-lab
+docker system df
 ```
 
-## 18.6 Check container processes
+**Important:** `docker stats` reports live container resource usage. `docker system df` reports Docker storage usage, not RAM usage.
+
+# 20. Docker Security Checks
+
+Use these checks on containers and images you own or are authorized to inspect.
+
+### Check running containers
 
 ```bash
-docker top kali-container
+docker ps
 ```
 
-## 18.7 Check exposed ports
+### Check privileged mode
 
 ```bash
-docker port kali-container
+docker inspect \
+  -f '{{.HostConfig.Privileged}}' kali-training
 ```
 
-## 18.8 Check container logs
-
-```bash
-docker logs kali-container
-```
-
-Follow logs:
-
-```bash
-docker logs -f kali-container
-```
-
-## 18.9 Check privileged mode
-
-```bash
-docker inspect -f '{{.HostConfig.Privileged}}' kali-container
-```
-
-For an ordinary lab container, the expected result is:
+Expected for a normal lab container:
 
 ```text
 false
 ```
 
-## 18.10 Check mounted volumes
+### Check configured user
 
 ```bash
-docker inspect -f '{{json .Mounts}}' kali-container
+docker inspect \
+  -f '{{.Config.User}}' kali-training
 ```
 
-## 18.11 Check capabilities
+### Check published ports
 
 ```bash
-docker inspect -f '{{json .HostConfig.CapAdd}}' kali-container
+docker port kali-training
 ```
 
-## 18.12 Check security options
+### Check added capabilities
 
 ```bash
-docker inspect -f '{{json .HostConfig.SecurityOpt}}' kali-container
+docker inspect \
+  -f '{{.HostConfig.CapAdd}}' kali-training
 ```
 
-## 18.13 Run Docker's built-in security benchmark
-
-Docker Bench for Security is a community-maintained audit tool that checks many Docker host configuration recommendations.
-
-Project:
-
-https://github.com/docker/docker-bench-security
-
-Read its documentation and review its audit behavior before running it. Use it only on systems you administer.
-
-## 18.14 Scan an image for known vulnerabilities
-
-Use Docker Scout where available:
+### Check mounted directories
 
 ```bash
-docker scout quickview secure-kali
+docker inspect \
+  -f '{{json .Mounts}}' kali-training
 ```
 
-For a more detailed CVE report:
+### Check restart policy
 
 ```bash
-docker scout cves secure-kali
+docker inspect \
+  -f '{{.HostConfig.RestartPolicy.Name}}' kali-training
 ```
 
-Availability depends on your Docker installation and account access.
-
-> Vulnerability scanners can report known package vulnerabilities. A clean scan does not guarantee that an image or application is secure.
-
----
-
-# 19. Dockerfile Security
-
-Good Dockerfile practices:
-
-1. Use trusted base images.
-2. Prefer supported image versions.
-3. Avoid installing unnecessary packages.
-4. Remove package manager cache.
-5. Run as a non-root user where possible.
-6. Do not store passwords in image layers.
-7. Do not copy private keys into an image.
-8. Do not use secrets as build arguments.
-9. Keep image size reasonable.
-10. Rebuild images to receive security updates.
-
-### Example safer Dockerfile
-
-```dockerfile
-FROM ubuntu:24.04
-
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN useradd -m -s /bin/bash appuser
-
-WORKDIR /home/appuser
-
-USER appuser
-
-CMD ["/bin/bash"]
-```
-
-Build:
+### Review logs
 
 ```bash
-docker build -t safer-ubuntu .
+docker logs --tail 100 kali-training
 ```
 
-Check the configured user:
+### Review image history
 
 ```bash
-docker image inspect -f '{{.Config.User}}' safer-ubuntu
+docker history secure-kali:1.0
 ```
 
-Expected:
-
-```text
-appuser
-```
-
----
-
-# 20. Container Security
-
-Useful security options include:
-
-### Run as a non-root user
+### Inspect image metadata
 
 ```bash
-docker run -it --user 1000:1000 ubuntu bash
+docker image inspect secure-kali:1.0
 ```
 
-This example assumes that the image and selected directory support that user ID.
+# 21. Docker Security Best Practices
 
-### Drop unnecessary Linux capabilities
+1. Use trusted and maintained base images.
+2. Prefer specific image tags instead of relying on `latest`.
+3. Run applications as non-root where possible.
+4. Avoid `--privileged` unless absolutely necessary.
+5. Avoid mounting sensitive host directories.
+6. Publish only required ports.
+7. Set CPU and memory limits for workloads.
+8. Keep images and packages updated.
+9. Do not store passwords, tokens, or private keys in images.
+10. Use `.dockerignore` to exclude unnecessary files.
+11. Review image layers and container configuration.
+12. Remove unused containers, images, and networks.
+13. Back up important volumes.
+14. Use read-only filesystems where supported.
+
+# 22. Logs and Troubleshooting
+
+### View logs
 
 ```bash
-docker run -it \
-  --cap-drop=ALL \
-  ubuntu bash
+docker logs kali-training
 ```
 
-Some applications need specific capabilities. Add only the capabilities required for the workload.
-
-### Use a read-only root filesystem
+### Follow logs live
 
 ```bash
-docker run -it \
-  --read-only \
-  --tmpfs /tmp \
-  ubuntu bash
+docker logs -f kali-training
 ```
 
-### Limit resources
+### View the last 50 lines
 
 ```bash
-docker run -dit \
-  --memory=512m \
-  --cpus=1 \
-  ubuntu bash
+docker logs --tail 50 kali-training
 ```
 
-### Avoid privileged containers
-
-Do not use `--privileged` unless there is a clear, authorized requirement. It grants broad access to host resources and weakens container isolation.
-
-### Important note
-
-Containers provide isolation, but they are not a replacement for host security. Keep the host updated and protect access to the Docker daemon.
-
----
-
-# 21. Docker Logs and Troubleshooting
-
-## View logs
-
-```bash
-docker logs CONTAINER_NAME
-```
-
-## Follow logs live
-
-```bash
-docker logs -f CONTAINER_NAME
-```
-
-## Show the latest 50 lines
-
-```bash
-docker logs --tail 50 CONTAINER_NAME
-```
-
-## Inspect container status
-
-```bash
-docker inspect CONTAINER_NAME
-```
-
-## Check container processes
-
-```bash
-docker top CONTAINER_NAME
-```
-
-## Check events
+### View Docker events
 
 ```bash
 docker events
 ```
 
-## Check disk usage
+### Inspect a container
 
 ```bash
-docker system df
+docker inspect kali-training
 ```
 
-## Check Docker daemon status
+### Check Docker service
 
 ```bash
 sudo systemctl status docker
 ```
 
----
+### Restart Docker service
 
-# 22. Docker Compose
+```bash
+sudo systemctl restart docker
+```
 
-Docker Compose manages applications containing multiple services.
+Restarting Docker can affect running containers, so use it carefully.
+
+# 23. Docker Compose
+
+Docker Compose manages applications made up of multiple containers.
 
 Create a directory:
 
@@ -1391,122 +1064,114 @@ Create `compose.yaml`:
 ```yaml
 services:
   web:
-    image: nginx:stable
+    image: nginx:alpine
     ports:
-      - "127.0.0.1:8080:80"
+      - "8080:80"
+    restart: unless-stopped
+
+  app:
+    image: ubuntu:24.04
+    command: ["sleep", "infinity"]
     restart: unless-stopped
 ```
 
-Start:
+### Start services
 
 ```bash
 docker compose up -d
 ```
 
-List services:
+### List services
 
 ```bash
 docker compose ps
 ```
 
-View logs:
+### View logs
 
 ```bash
 docker compose logs
 ```
 
-Stop:
+### Stop services
+
+```bash
+docker compose stop
+```
+
+### Stop and remove containers and network
 
 ```bash
 docker compose down
 ```
 
-The example uses a locally bound port. This is suitable for a local learning environment.
+**Why use Compose?** It stores multi-container configuration in one file, making environments easier to reproduce.
 
----
+# 24. Docker Cleanup
 
-# 23. Docker Cleanup and Maintenance
-
-## Remove a container
+### Remove stopped containers
 
 ```bash
-docker rm CONTAINER_NAME
+docker container prune
 ```
 
-<<<<<<< HEAD
-**FAQ**
-=======
-## Remove an image
->>>>>>> 8b2985e (Update README file)
+### Remove unused networks
 
 ```bash
-docker rmi IMAGE_ID
+docker network prune
 ```
 
-## Remove unused containers and networks
+### Remove dangling images
+
+```bash
+docker image prune
+```
+
+### Remove unused build cache
+
+```bash
+docker builder prune
+```
+
+### General cleanup
 
 ```bash
 docker system prune
 ```
 
-## Remove unused images too
+### Include unused volumes
 
 ```bash
-docker system prune -a
+docker system prune --volumes
 ```
 
-## List volumes
+**Warning:** Cleanup commands can delete resources and data. Review what will be removed before confirming. Back up important volumes first.
+
+# 25. Useful Docker Aliases
+
+Add these to `~/.bashrc`:
 
 ```bash
-docker volume ls
-```
-
-## Remove a specific unused volume
-
-```bash
-docker volume rm VOLUME_NAME
-```
-
-## Check disk usage
-
-```bash
-docker system df
-```
-
-> Be careful with prune and volume-removal commands. They can permanently delete data. Never remove a volume until you have confirmed it does not contain data you need.
-
----
-
-# 24. Docker Aliases and Shortcuts
-
-Open Bash configuration:
-
-```bash
-nano ~/.bashrc
-```
-
-Add:
-
-```bash
-# Docker shortcut
+# Short Docker command
 alias d='docker'
 
-# Container shortcuts
+# List running containers
 alias dps='docker ps'
+
+# List all containers
 alias dpa='docker ps -a'
-alias dstart='docker start'
-alias dstop='docker stop'
-alias drm='docker rm'
-alias dexec='docker exec -it'
 
-# Image shortcuts
+# List images
 alias di='docker images'
-alias dpull='docker pull'
-alias drmi='docker rmi'
 
-# Resource monitoring
+# Live resource usage
 alias dstats='docker stats'
+
+# Docker storage usage
 alias ddf='docker system df'
+
+# View container logs
+alias dlogs='docker logs'
 ```
 
 Reload:
@@ -1515,414 +1180,145 @@ Reload:
 source ~/.bashrc
 ```
 
-Examples:
+Test:
 
 ```bash
-d ps
-d ps -a
-d images
-d stats
-d system df
+dps
+di
 ```
 
----
+# 26. Docker Project Structure
 
-# 25. Git and GitHub Setup
+Recommended repository structure:
 
-Git tracks changes in project files. GitHub hosts Git repositories online.
+```text
+Docker-Training/
+├── README.md
+├── Dockerfile
+├── compose.yaml
+├── .dockerignore
+├── .gitignore
+├── scripts/
+│   └── kali
+├── examples/
+│   ├── ubuntu/
+│   │   └── Dockerfile
+│   └── kali/
+│       └── Dockerfile
+└── screenshots/
+```
 
-Install Git:
+Create the structure:
 
 ```bash
-sudo apt update
-sudo apt install -y git
+mkdir -p Docker-Training/{scripts,examples/ubuntu,examples/kali,screenshots}
+
+cd Docker-Training
+
+touch README.md Dockerfile compose.yaml
+touch .dockerignore .gitignore
+touch scripts/kali
+touch examples/ubuntu/Dockerfile
+touch examples/kali/Dockerfile
 ```
 
-Configure identity:
+# 27. Docker Ignore Files
 
-```bash
-git config --global user.name "Faqdot"
-git config --global user.email "YOUR_GITHUB_EMAIL"
+### .dockerignore
+
+Create `.dockerignore`:
+
+```text
+.git
+.github
+.env
+*.key
+*.pem
+*.log
+screenshots/
 ```
 
-Check:
+**Why?** Prevents unnecessary files from entering the Docker build context.
 
-```bash
-git config --global --list
+Do not put secrets in the build context in the first place.
+
+### .gitignore
+
+Create `.gitignore`:
+
+```text
+.env
+*.key
+*.pem
+*.log
+*.tar
+*.tar.gz
+.DS_Store
 ```
 
-Create a project directory:
+**Why?** Helps prevent local files and credentials from being committed to Git.
 
-```bash
-mkdir -p ~/project/Docker-Training
-cd ~/project/Docker-Training
-```
+Never commit private SSH keys or passwords.
 
-Initialize Git:
+# 28. Git and GitHub
 
-```bash
-git init
-```
-
-Check status:
+### Check repository status
 
 ```bash
 git status
 ```
 
----
-
-# 26. SSH Authentication
-
-Check SSH keys:
-
-```bash
-ls -la ~/.ssh
-```
-
-Generate an Ed25519 key if needed:
-
-```bash
-ssh-keygen -t ed25519 -C "YOUR_GITHUB_EMAIL"
-```
-
-Start the agent:
-
-```bash
-eval "$(ssh-agent -s)"
-```
-
-Add the private key:
-
-```bash
-ssh-add ~/.ssh/id_ed25519
-```
-
-Display the public key:
-
-```bash
-cat ~/.ssh/id_ed25519.pub
-```
-
-Add the public key to:
-
-https://github.com/settings/keys
-
-Test:
-
-```bash
-ssh -T git@github.com
-```
-
-Expected:
-
-```text
-Hi Faqdot! You've successfully authenticated,
-but GitHub does not provide shell access.
-```
-
-**Never upload the private key.** Only the `.pub` public key belongs in GitHub.
-
----
-
-# 27. Save and Upload the Project to GitHub
-
-Create a GitHub repository:
-
-```text
-Docker-Training
-```
-
-Repository:
-
-https://github.com/Faqdot/Docker-Training
-
-Set the SSH remote:
-
-```bash
-git remote add origin git@github.com:Faqdot/Docker-Training.git
-```
-
-If a remote already exists:
-
-```bash
-git remote set-url origin git@github.com:Faqdot/Docker-Training.git
-```
-
-Check:
-
-```bash
-git remote -v
-```
-
-Add project files:
+### Add files
 
 ```bash
 git add .
 ```
 
-Commit:
+### Commit changes
 
 ```bash
-git commit -m "Initial Docker training project"
+git commit -m "Add Docker training guide and examples"
 ```
 
-Set the branch name:
+### Check branch
+
+```bash
+git branch
+```
+
+### Rename branch
 
 ```bash
 git branch -M main
 ```
 
-Push:
+### Check remote
+
+```bash
+git remote -v
+```
+
+### Add remote if not configured
+
+```bash
+git remote add origin git@github.com:Faqdot/Docker-Training.git
+```
+
+If the remote already exists, update it:
+
+```bash
+git remote set-url origin git@github.com:Faqdot/Docker-Training.git
+```
+
+### Push to GitHub
 
 ```bash
 git push -u origin main
 ```
 
-For later changes:
+# 29. Common Errors
 
-```bash
-git add .
-git commit -m "Update Docker manual"
-git push
-```
-
----
-
-# 28. Terminal Input and Output Examples
-
-The outputs below are illustrative. Your IDs, resource values, timestamps, and versions will differ.
-
-## Example 1 – Docker Version
-
-Input:
-
-```bash
-docker --version
-```
-
-Output:
-
-```text
-Docker version 28.x.x, build xxxxxxx
-```
-
-## Example 2 – List Images
-
-Input:
-
-```bash
-docker images
-```
-
-Output:
-
-```text
-REPOSITORY   TAG       IMAGE ID       SIZE
-ubuntu       latest    abc123456789   78MB
-secure-kali  latest    def987654321   1.2GB
-```
-
-## Example 3 – List Containers
-
-Input:
-
-```bash
-docker ps -a
-```
-
-Output:
-
-```text
-CONTAINER ID   IMAGE        STATUS          NAMES
-abc123         secure-kali  Up 5 minutes    kali-container
-def456         ubuntu       Exited          ubuntu-lab
-```
-
-## Example 4 – Check Current User
-
-Input:
-
-```bash
-whoami
-```
-
-Output:
-
-```text
-kali
-```
-
-## Example 5 – Check Hostname
-
-Input:
-
-```bash
-hostname
-```
-
-Output:
-
-```text
-kali-training
-```
-
-## Example 6 – Check Working Directory
-
-Input:
-
-```bash
-pwd
-```
-
-Output:
-
-```text
-/home/dev/project
-```
-
-## Example 7 – Check CPU and Memory
-
-Input:
-
-```bash
-docker stats --no-stream
-```
-
-Illustrative output:
-
-```text
-CONTAINER ID   NAME            CPU %   MEM USAGE / LIMIT
-abc123         kali-container  0.20%   65MiB / 512MiB
-```
-
-## Example 8 – Check Image User
-
-Input:
-
-```bash
-docker image inspect -f '{{.Config.User}}' secure-kali
-```
-
-Output:
-
-```text
-kali
-```
-
-## Example 9 – Check Git Status
-
-Input:
-
-```bash
-git status
-```
-
-Output:
-
-```text
-On branch main
-Your branch is up to date with 'origin/main'.
-
-nothing to commit, working tree clean
-```
-
-## Example 10 – Check GitHub SSH
-
-Input:
-
-```bash
-ssh -T git@github.com
-```
-
-Output:
-
-```text
-Hi Faqdot! You've successfully authenticated,
-but GitHub does not provide shell access.
-```
-
----
-
-# 29. Screenshots and Documentation
-
-Screenshots provide visual evidence that each step was completed.
-
-Create a screenshot directory:
-
-```bash
-mkdir -p screenshots
-```
-
-Recommended screenshot list:
-
-| File | Screenshot content |
-|---|---|
-| `01-docker-version.png` | Docker version |
-| `02-hello-world.png` | Hello World test |
-| `03-docker-images.png` | Downloaded images |
-| `04-docker-containers.png` | Container list |
-| `05-custom-image-build.png` | Docker image build |
-| `06-kali-container.png` | Kali terminal |
-| `07-kali-user.png` | Regular user |
-| `08-sudo-test.png` | Sudo authentication |
-| `09-network.png` | Docker network |
-| `10-volumes.png` | Docker volumes |
-| `11-resource-stats.png` | Docker stats |
-| `12-security-check.png` | Container inspection |
-| `13-git-status.png` | Git status |
-| `14-ssh-authentication.png` | SSH test |
-| `15-github-repository.png` | GitHub repository |
-
-Display screenshots in Markdown:
-
-```markdown
-## Docker Version
-
-![Docker Version](screenshots/01-docker-version.png)
-
-## Docker Images
-
-![Docker Images](screenshots/03-docker-images.png)
-
-## Kali Container
-
-![Kali Container](screenshots/06-kali-container.png)
-
-## Resource Monitoring
-
-![Docker Resource Stats](screenshots/11-resource-stats.png)
-
-## GitHub SSH Authentication
-
-![SSH Authentication](screenshots/14-ssh-authentication.png)
-```
-
-Add screenshots to Git:
-
-```bash
-git add screenshots/
-git commit -m "Add Docker lab screenshots"
-git push
-```
-
-Only use real screenshots from your own environment. Sample command outputs in this manual are not screenshots or proof of successful execution.
-
----
-
-# 30. Common Errors and Solutions
-
-## Docker command not found
-
-Check:
-
-```bash
-docker --version
-```
-
-Install Docker if it is missing.
-
-## Cannot connect to Docker daemon
+### Docker daemon not running
 
 Check:
 
@@ -1930,13 +1326,23 @@ Check:
 sudo systemctl status docker
 ```
 
-Start the service if necessary:
+Start:
 
 ```bash
 sudo systemctl start docker
 ```
 
-## Container name already exists
+### Permission denied
+
+Try:
+
+```bash
+sudo docker ps
+```
+
+If configuring Docker group access, log out and back in after adding your user to the group.
+
+### Container name already exists
 
 Check:
 
@@ -1944,299 +1350,170 @@ Check:
 docker ps -a
 ```
 
-Remove the old container if no longer needed:
+Remove the old container only if it is no longer needed:
 
 ```bash
-docker rm -f kali-container
+docker rm old-container
 ```
 
-## Image is being used by a container
+### Image is being used by a container
 
-Find the container:
+Check:
 
 ```bash
 docker ps -a
 ```
 
-Remove the relevant container if it is no longer needed, then remove the image.
+Remove the dependent container if it is no longer needed, then remove the image.
 
-## User does not exist
-
-Check:
-
-```bash
-cat /etc/passwd
-```
-
-Create the user as root:
-
-```bash
-useradd -m -s /bin/bash kali
-```
-
-## Permission denied
-
-Check the current user:
-
-```bash
-whoami
-```
-
-Check file permissions:
-
-```bash
-ls -l
-```
-
-## Git push rejected
+### Port already allocated
 
 Check:
 
 ```bash
-git status
-git branch
-git remote -v
+sudo ss -lntp
 ```
 
-Pull remote changes when appropriate, resolve conflicts, then commit and push.
+Choose another available host port.
 
-## SSH permission denied
+### No space left on device
 
 Check:
 
 ```bash
-ssh-add -l
+df -h
+docker system df
 ```
 
-Test:
+Review unused resources before cleaning them up.
 
-```bash
-ssh -T git@github.com
-```
+# 30. Quick Command Reference
 
-Make sure the matching public key is registered with GitHub.
-
----
-
-# 31. Security Best Practices
-
-- Use trusted base images.
-- Keep the Docker host updated.
-- Avoid running applications as root.
-- Do not use privileged containers unnecessarily.
-- Set CPU and memory limits.
-- Avoid exposing unnecessary ports.
-- Do not store secrets in Dockerfiles.
-- Never commit private SSH keys.
-- Use persistent volumes for important data.
-- Inspect images before using them.
-- Scan images for known vulnerabilities.
-- Keep container privileges as limited as practical.
-- Review Docker networks and published ports.
-- Back up important volumes.
-- Only test systems for which you have permission.
-
----
-
-# 32. Learning Checklist
-
-## Docker Fundamentals
-
-- [ ] Install Docker.
-- [ ] Verify Docker.
-- [ ] Understand Docker architecture.
-- [ ] Download images.
-- [ ] List images.
-- [ ] Inspect images.
-- [ ] Run containers.
-- [ ] Start and stop containers.
-- [ ] Remove containers.
-- [ ] Remove images.
-
-## Custom Images
-
-- [ ] Understand Dockerfile instructions.
-- [ ] Create a Dockerfile.
-- [ ] Build a custom image.
-- [ ] Run the custom image.
-- [ ] Inspect the image.
-- [ ] Use a non-root user.
-
-## Container Management
-
-- [ ] Manage container lifecycle.
-- [ ] Configure networking.
-- [ ] Configure volumes.
-- [ ] Set CPU limits.
-- [ ] Set memory limits.
-- [ ] Monitor Docker resources.
-- [ ] Inspect logs and processes.
-- [ ] Clean up unused resources.
-
-## Security
-
-- [ ] Inspect container privileges.
-- [ ] Check user permissions.
-- [ ] Check mounted volumes.
-- [ ] Review published ports.
-- [ ] Scan images.
-- [ ] Avoid privileged mode.
-- [ ] Avoid storing secrets in images.
-
-## Git and GitHub
-
-- [ ] Install Git.
-- [ ] Configure Git identity.
-- [ ] Initialize a repository.
-- [ ] Create an SSH key.
-- [ ] Register public key with GitHub.
-- [ ] Test SSH authentication.
-- [ ] Commit changes.
-- [ ] Push to GitHub.
-- [ ] Add screenshots to README.
-
----
-
-# 33. Project Directory Structure
-
-Recommended repository structure:
-
-```text
-Docker-Training/
-│
-├── README.md
-│
-├── compose.yaml
-│
-├── .dockerignore
-│
-├── .gitignore
-│
-├── scripts/
-│   └── kali
-│
-├── Dockerfiles/
-│   ├── ubuntu/
-│   │   └── Dockerfile
-│   │
-│   └── kali/
-│       └── Dockerfile
-│
-└── screenshots/
-    ├── 01-docker-version.png
-    ├── 02-hello-world.png
-    ├── 03-docker-images.png
-    ├── 04-docker-containers.png
-    ├── 05-custom-image-build.png
-    ├── 06-kali-container.png
-    ├── 07-kali-user.png
-    ├── 08-sudo-test.png
-    ├── 09-network.png
-    ├── 10-volumes.png
-    ├── 11-resource-stats.png
-    ├── 12-security-check.png
-    ├── 13-git-status.png
-    ├── 14-ssh-authentication.png
-    └── 15-github-repository.png
-```
-
-### Example `.dockerignore`
-
-```text
-.git
-.gitignore
-.env
-.env.*
-*.log
-*.tmp
-screenshots/
-```
-
-### Example `.gitignore`
-
-```text
-# Secrets
-.env
-.env.*
-*.pem
-*.key
-
-# Private SSH keys
-id_ed25519
-id_rsa
-github
-
-# Temporary files
-*.log
-*.tmp
-
-# Editor folders
-.vscode/
-.idea/
-```
-
-Do not commit private keys, passwords, tokens, or other secrets.
-
----
-
-# 34. Useful Documentation
-
-| Resource | Link |
+| Task | Command |
 |---|---|
-| Docker Documentation | https://docs.docker.com/ |
-| Docker Engine | https://docs.docker.com/engine/ |
-| Docker Hub | https://hub.docker.com/ |
-| Docker Compose | https://docs.docker.com/compose/ |
-| Docker Security | https://docs.docker.com/engine/security/ |
-| Docker Scout | https://docs.docker.com/scout/ |
-| Kali Linux Documentation | https://www.kali.org/docs/ |
-| Git Documentation | https://git-scm.com/doc |
-| GitHub Documentation | https://docs.github.com/ |
-| GitHub SSH Guide | https://docs.github.com/en/authentication/connecting-to-github-with-ssh |
+| Docker version | `docker --version` |
+| Docker details | `docker info` |
+| Download image | `docker pull ubuntu` |
+| List images | `docker images` |
+| Run container | `docker run -it ubuntu bash` |
+| List running containers | `docker ps` |
+| List all containers | `docker ps -a` |
+| Enter container | `docker exec -it NAME bash` |
+| Stop container | `docker stop NAME` |
+| Start container | `docker start NAME` |
+| Remove container | `docker rm NAME` |
+| Remove image | `docker rmi IMAGE` |
+| Build image | `docker build -t NAME .` |
+| Monitor resources | `docker stats` |
+| Inspect container | `docker inspect NAME` |
+| View logs | `docker logs NAME` |
+| List networks | `docker network ls` |
+| List volumes | `docker volume ls` |
+| Docker disk usage | `docker system df` |
+| Compose start | `docker compose up -d` |
+| Compose stop/remove | `docker compose down` |
+
+# 31. Practical Workflow
+
+A typical custom Kali image workflow:
+
+```bash
+# 1. Go to the project directory
+cd ~/project/Docker-Training
+
+# 2. Build the custom image
+docker build \
+  -t secure-kali:1.0 \
+  -f examples/kali/Dockerfile \
+  examples/kali
+
+# 3. Check the image
+docker images
+
+# 4. Create and start a container
+docker run -dit \
+  --name kali-training \
+  secure-kali:1.0
+
+# 5. Check running containers
+docker ps
+
+# 6. Enter the container
+docker exec -it kali-training bash
+
+# 7. Check user and working directory
+whoami
+pwd
+
+# 8. Monitor resource usage
+docker stats kali-training
+
+# 9. Exit the container shell
+exit
+
+# 10. Stop the container
+docker stop kali-training
+
+# 11. Start it again when needed
+docker start kali-training
+
+# 12. Remove it only when no longer needed
+docker rm -f kali-training
+
+# 13. Remove the image only when no container depends on it
+docker rmi secure-kali:1.0
+```
+
+**Remember:**
+
+- `docker stop` stops a container but keeps it.
+- `docker start` starts an existing stopped container.
+- `docker rm` removes a container.
+- `docker rmi` removes an image.
+- Named volumes are separate from containers and can persist after container removal.
+
+# 32. Learning Roadmap
+
+Follow this order:
+
+1. Install Docker.
+2. Learn image commands.
+3. Learn container lifecycle commands.
+4. Practice `run`, `exec`, `stop`, `start`, and `rm`.
+5. Write a basic Dockerfile.
+6. Build and run a custom Ubuntu image.
+7. Build a custom Kali image.
+8. Learn users and permissions.
+9. Practice networking and port mapping.
+10. Practice volumes and bind mounts.
+11. Monitor CPU, memory, and disk usage.
+12. Perform basic container security checks.
+13. Learn Docker Compose.
+14. Learn cleanup and troubleshooting.
+15. Publish your project to GitHub.
 
 ---
 
-# 35. Final Project Summary
+## Official Documentation
 
-This project covers the practical Docker workflow:
+- Docker documentation: https://docs.docker.com/
+- Docker Engine: https://docs.docker.com/engine/
+- Dockerfile reference: https://docs.docker.com/reference/dockerfile/
+- Docker Compose: https://docs.docker.com/compose/
+- Docker security: https://docs.docker.com/engine/security/
 
-```text
-Install Docker
-      |
-      v
-Understand Docker Architecture
-      |
-      v
-Download Base Images
-      |
-      v
-Create Dockerfile
-      |
-      v
-Build Custom Image
-      |
-      v
-Run Container
-      |
-      v
-Configure Users and Permissions
-      |
-      v
-Configure Networks and Volumes
-      |
-      v
-Manage CPU, Memory and Storage
-      |
-      v
-Monitor Container Resources
-      |
-      v
-Perform Security Checks
-      |
-      v
-Save Project with Git
-      |
-      v
-Push Project to GitHub
-```
+## Learning Goal
 
+After completing this guide, you should be able to:
+
+- Install and configure Docker.
+- Manage images and containers.
+- Build custom Docker images.
+- Create and manage Kali and Ubuntu containers.
+- Configure users, permissions, networks, and volumes.
+- Monitor container resource usage.
+- Perform basic Docker security checks.
+- Troubleshoot common Docker problems.
+- Maintain and publish a Docker training project on GitHub.
+
+**Note:** Use the Kali environment as an isolated learning lab. Only test systems and applications that you own or have explicit permission to assess.
