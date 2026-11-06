@@ -2106,8 +2106,6 @@ Docker-Training/
 │
 ├── README.md
 │
-├── Dockerfile
-│
 ├── compose.yaml
 │
 ├── .dockerignore
@@ -2117,7 +2115,7 @@ Docker-Training/
 ├── scripts/
 │   └── kali
 │
-├── examples/
+├── Dockerfiles/
 │   ├── ubuntu/
 │   │   └── Dockerfile
 │   │
@@ -2242,12 +2240,3 @@ Save Project with Git
 Push Project to GitHub
 ```
 
-**Project objective:** Build practical knowledge of Docker from the fundamentals through custom image creation, container operations, resource management, security checks, and GitHub-based project documentation.
-
----
-
-**Author:** Faqdot  
-**GitHub:** https://github.com/Faqdot  
-**Repository:** https://github.com/Faqdot/Docker-Training
-
-*This is a learning manual. Commands and sample outputs should be tested and verified in your own environment before being treated as actual results.*
