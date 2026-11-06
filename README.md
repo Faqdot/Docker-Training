@@ -218,12 +218,13 @@ sudo docker run hello-world
 
 Expected output:
 
-``
+```
 Hello from Docker!
 
 This message shows that your installation appears
 to be working correctly.
-``
+
+```
 
 Check the Docker version:
 
