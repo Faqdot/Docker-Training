@@ -1,4 +1,4 @@
-# Docker A–Z: Complete Beginner-to-Practical Manual
+# Docker: Complete Beginner Practical Manual
 
 **A practical guide to Docker, custom images, container management, security checks, resource monitoring, and GitHub project management.**
 
@@ -218,12 +218,12 @@ sudo docker run hello-world
 
 Expected output:
 
-```text
+``
 Hello from Docker!
 
 This message shows that your installation appears
 to be working correctly.
-```
+``
 
 Check the Docker version:
 
@@ -233,7 +233,7 @@ docker --version
 
 Example:
 
-``text
+``
 Docker version 29.x.x, build xxxxxxx
 ``
 
