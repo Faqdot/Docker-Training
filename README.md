@@ -519,6 +519,6 @@ Your Kali Docker environment will have:
 
 ## 👨‍💻 Author
 
-**Kali Linux Docker Lab**
+**FAQ**
 
 A personal Linux and DevOps learning environment.
