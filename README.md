@@ -233,9 +233,9 @@ docker --version
 
 Example:
 
-```text
-Docker version 28.x.x, build xxxxxxx
-```
+``text
+Docker version 29.x.x, build xxxxxxx
+``
 
 Check available images:
 
